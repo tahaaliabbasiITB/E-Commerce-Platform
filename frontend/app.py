@@ -3,13 +3,11 @@ import requests
 import pandas as pd
 import plotly.express as px
 
-# --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="E-Com RDBMS Pro", layout="wide", page_icon="🛒")
 
-# FastAPI Backend URL
 BASE_URL = "http://127.0.0.1:8000"
 
-# --- API HELPER FUNCTIONS ---
+
 def get_data(endpoint):
     try:
         response = requests.get(f"{BASE_URL}/{endpoint}")
@@ -26,16 +24,13 @@ def put_data(endpoint, data):
 def delete_data(endpoint):
     return requests.delete(f"{BASE_URL}/{endpoint}")
 
-# --- SIDEBAR NAVIGATION ---
 st.sidebar.title("🛠️ Admin Control")
 page = st.sidebar.radio("Navigate to:", ["📊 Analytics Dashboard", "📦 Inventory Manager", "👥 User Directory", "🧾 Sales Records"])
 
-# --- PAGE 1: ANALYTICS DASHBOARD (READ) ---
 if page == "📊 Analytics Dashboard":
     st.title("Business Intelligence Dashboard")
     st.caption("Pulling live relational data from Neon PostgreSQL via FastAPI Logic Tier")
 
-    # Metrics Summary
     summary = get_data("dashboard/summary")
     if summary:
         m1, m2, m3 = st.columns(3)
@@ -48,7 +43,6 @@ if page == "📊 Analytics Dashboard":
 
     st.divider()
 
-    # Visualizations
     col1, col2 = st.columns(2)
     
     with col1:
@@ -71,20 +65,17 @@ if page == "📊 Analytics Dashboard":
             fig_pie = px.pie(df_o, names="status", hole=0.4, color_discrete_sequence=px.colors.sequential.RdBu)
             st.plotly_chart(fig_pie, use_container_width=True)
 
-# --- PAGE 2: INVENTORY MANAGER (FULL CRUD: C, U, D) ---
 elif page == "📦 Inventory Manager":
-    st.title("Product & Inventory Management (CRUD)")
+    st.title("Product & Inventory Management")
     
     tab1, tab2, tab3, tab4 = st.tabs(["📋 View Catalog", "➕ Add Product", "✏️ Edit Product", "🗑️ Remove Product"])
 
-    # READ
     with tab1:
         st.subheader("Current RDBMS Product Records")
         all_prods = get_data("products")
         if all_prods:
             st.dataframe(pd.DataFrame(all_prods), use_container_width=True, hide_index=True)
 
-    # CREATE
     with tab2:
         st.subheader("Insert New Product")
         with st.form("create_form"):
@@ -105,7 +96,7 @@ elif page == "📦 Inventory Manager":
                 else:
                     st.error(f"FAILED: {res.text}")
 
-    # UPDATE
+    
     with tab3:
         st.subheader("Update Existing Product")
         upd_id = st.number_input("Enter Product ID to modify", min_value=1, step=1)
@@ -133,7 +124,6 @@ elif page == "📦 Inventory Manager":
                     else:
                         st.error("Update failed.")
 
-    # DELETE
     with tab4:
         st.subheader("Permanent Record Deletion")
         del_id = st.number_input("Enter Product ID to delete", min_value=1, step=1)
@@ -145,7 +135,7 @@ elif page == "📦 Inventory Manager":
             else:
                 st.error("Delete command rejected.")
 
-# --- PAGE 3: USER DIRECTORY ---
+
 elif page == "👥 User Directory":
     st.title("User & Stakeholder Directory")
     users = get_data("users")
@@ -153,7 +143,7 @@ elif page == "👥 User Directory":
         df_u = pd.DataFrame(users)
         st.dataframe(df_u[["user_id", "first_name", "last_name", "email", "role_id"]], use_container_width=True)
 
-# --- PAGE 4: SALES RECORDS ---
+
 elif page == "🧾 Sales Records":
     st.title("Transactional History")
     orders = get_data("orders")

@@ -3,14 +3,12 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
 
-# 1. ROLES
 class Role(Base):
     __tablename__ = "roles"
     role_id = Column(Integer, primary_key=True, index=True)
     role_name = Column(String, nullable=False, unique=True)
     users = relationship("User", back_populates="role")
 
-# 2. USERS
 class User(Base):
     __tablename__ = "users"
     user_id = Column(Integer, primary_key=True, index=True)
@@ -26,7 +24,6 @@ class User(Base):
     products = relationship("Product", back_populates="vendor")
     orders = relationship("Order", back_populates="customer")
 
-# 3. CATEGORIES
 class Category(Base):
     __tablename__ = "categories"
     category_id = Column(Integer, primary_key=True, index=True)
@@ -34,7 +31,6 @@ class Category(Base):
     description = Column(Text)
     products = relationship("Product", back_populates="category")
 
-# 4. PRODUCTS
 class Product(Base):
     __tablename__ = "products"
     product_id = Column(Integer, primary_key=True, index=True)
@@ -49,7 +45,6 @@ class Product(Base):
     vendor = relationship("User", back_populates="products")
     inventory = relationship("Inventory", back_populates="product", uselist=False)
 
-# 5. INVENTORY
 class Inventory(Base):
     __tablename__ = "inventory"
     inventory_id = Column(Integer, primary_key=True, index=True)
@@ -60,7 +55,6 @@ class Inventory(Base):
 
     product = relationship("Product", back_populates="inventory")
 
-# 6. ORDERS
 class Order(Base):
     __tablename__ = "orders"
     order_id = Column(Integer, primary_key=True, index=True)
@@ -74,7 +68,6 @@ class Order(Base):
     payment = relationship("Payment", back_populates="order", uselist=False)
     shipping = relationship("ShippingDetail", back_populates="order", uselist=False)
 
-# 7. ORDER ITEMS
 class OrderItem(Base):
     __tablename__ = "order_items"
     order_item_id = Column(Integer, primary_key=True, index=True)
@@ -85,7 +78,6 @@ class OrderItem(Base):
 
     order = relationship("Order", back_populates="items")
 
-# 8. PAYMENTS
 class Payment(Base):
     __tablename__ = "payments"
     payment_id = Column(Integer, primary_key=True, index=True)
@@ -97,7 +89,6 @@ class Payment(Base):
 
     order = relationship("Order", back_populates="payment")
 
-# 9. REVIEWS
 class Review(Base):
     __tablename__ = "reviews"
     review_id = Column(Integer, primary_key=True, index=True)
@@ -107,7 +98,6 @@ class Review(Base):
     comment = Column(Text)
     review_date = Column(TIMESTAMP, server_default=func.now())
 
-# 10. SHIPPING DETAILS
 class ShippingDetail(Base):
     __tablename__ = "shipping_details"
     shipping_id = Column(Integer, primary_key=True, index=True)
